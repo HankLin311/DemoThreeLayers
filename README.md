@@ -1,4 +1,4 @@
-# DemoThreeLayers
+# DemoThreeLayers(.Net 5)
 
 第一次練習實作 Three-Layers
 
