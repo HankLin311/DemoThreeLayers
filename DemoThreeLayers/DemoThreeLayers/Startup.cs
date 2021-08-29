@@ -1,21 +1,45 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using RehabusSystem.Common.DbContexts;
+using Microsoft.Extensions.Configuration;
+using DemoThreeLayers.Repository.Interfaces;
+using DemoThreeLayers.Repository;
+using DemoThreeLayers.Services.Interfaces;
+using DemoThreeLayers.Services;
 
 namespace DemoThreeLayers
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public IConfiguration _configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        // DependencyInjection
         public void ConfigureServices(IServiceCollection services)
         {
+            // 딩쩤 EF Core
+            services.AddDbContext<AppDbContext>(
+                options => options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
+
+            // 딩쩤 MVC
+            services.AddMvc();
+
+            // 딩쩤 Repository
+            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+
+            // 딩쩤 Service
+            services.AddTransient<IEmployeeService, EmployeeService>();
+
+            // 딩쩤 AutoMapper
+            services.AddAutoMapper(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -26,14 +50,16 @@ namespace DemoThreeLayers
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+
             });
         }
     }
