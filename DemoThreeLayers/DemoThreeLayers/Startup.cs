@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+ï»¿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -25,20 +25,20 @@ namespace DemoThreeLayers
         // DependencyInjection
         public void ConfigureServices(IServiceCollection services)
         {
-            // µù¥U EF Core
+            // è¨»å†Š EF Core
             services.AddDbContext<AppDbContext>(
                 options => options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
-            // µù¥U MVC
+            // è¨»å†Š MVC
             services.AddMvc();
 
-            // µù¥U Repository
+            // è¨»å†Š Repository
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
 
-            // µù¥U Service
+            // è¨»å†Š Service
             services.AddTransient<IEmployeeService, EmployeeService>();
 
-            // µù¥U AutoMapper
+            // è¨»å†Š AutoMapper
             services.AddAutoMapper(typeof(Startup));
         }
 
